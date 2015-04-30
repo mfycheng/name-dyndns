@@ -1,0 +1,17 @@
+{
+	"configs": [
+		{
+			"username": "debug-account",
+			"token": "asdasdasdasdasdad",
+			"interval": 60,
+			"debug": true,
+			"domains": [ "test.com", "fake.com" ]
+		},
+		{
+			"username": "production-account",
+			"token": "123123123123",
+			"interval": 3600,
+			"domains": [ "live.com", "abc.live.com" ]
+		}
+	]
+}
