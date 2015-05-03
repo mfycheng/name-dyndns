@@ -1,17 +1,19 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/mfycheng/name-dyndns/api"
+	"github.com/mfycheng/name-dyndns/dyndns"
 	"os"
 )
 
-const (
-	defaultConfigPath = "./config.json"
-)
-
 func main() {
-	configs, err := api.LoadConfigs(defaultConfigPath)
+	configPath := flag.String("config", "./config.json", "Specify the configuration file")
+	daemon := flag.Bool("daemon", false, "operate in daemon mode")
+	flag.Parse()
+
+	configs, err := api.LoadConfigs(*configPath)
 	if err != nil {
 		fmt.Println("Error loading config:", err)
 		os.Exit(1)
@@ -19,7 +21,5 @@ func main() {
 	}
 
 	fmt.Printf("Successfully loaded %d configs\n", len(configs))
-	for _, config := range configs {
-		fmt.Println("Processing config", config)
-	}
+	dyndns.Run(configs, *daemon)
 }

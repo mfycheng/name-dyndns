@@ -10,7 +10,7 @@ import (
 var wg sync.WaitGroup
 
 func updateDomain(a api.API, currentIP, domain string) error {
-	records, err := api.GetRecords(domain)
+	records, err := a.GetRecords(domain)
 	if err != nil {
 		return err
 	}
