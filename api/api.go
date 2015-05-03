@@ -34,16 +34,25 @@ type resultResponse struct {
 	Message string `json:"message"`
 }
 
-func NewAPI(c Config) API {
-	a := API{username: c.Username, token: c.Token}
+// Constructs a new Name.com API
+//
+// If dev = true, then the API uses the development
+// API, instead of the production API.
+func NewNameAPI(username, token string, dev bool) API {
+	a := API{username: username, token: token}
 
-	if c.Debug {
+	if dev {
 		a.baseUrl = devUrl
 	} else {
 		a.baseUrl = productionUrl
 	}
 
 	return a
+}
+
+// Constructs a new Name.com API from a configuration
+func NewAPIFromConfig(c Config) API {
+	return NewNameAPI(c.Username, c.Token, c.Dev)
 }
 
 func (api API) performRequest(method, url string, body io.Reader) (response []byte, err error) {
@@ -65,6 +74,7 @@ func (api API) performRequest(method, url string, body io.Reader) (response []by
 	return ioutil.ReadAll(resp.Body)
 }
 
+// Returns a slice of DNS records associated with a given hostname.
 func (api API) GetRecords(hostname string) (records []DNSRecord, err error) {
 	resp, err := api.performRequest("GET", fmt.Sprintf("%s%s%s", api.baseUrl, "api/dns/list/", hostname), nil)
 	if err != nil {

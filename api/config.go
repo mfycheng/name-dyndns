@@ -6,7 +6,7 @@ import (
 )
 
 type Config struct {
-	Debug    bool     `json:"debug"`
+	Dev      bool     `json:"dev"`
 	Domains  []string `json:"domains"`
 	Interval int      `json:"interval"`
 	Token    string   `json:"token"`

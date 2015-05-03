@@ -10,10 +10,10 @@ var expectedConfigs []Config
 func init() {
 	expectedConfigs = []Config{
 		Config{
-			Username: "debug-account",
+			Username: "dev-account",
 			Token:    "asdasdasdasdasdad",
 			Interval: 60,
-			Debug:    true,
+			Dev:      true,
 			Domains:  []string{"test.com", "fake.com"},
 		},
 		Config{

@@ -1,10 +1,10 @@
 {
 	"configs": [
 		{
-			"username": "debug-account",
+			"username": "dev-account",
 			"token": "asdasdasdasdasdad",
 			"interval": 60,
-			"debug": true,
+			"dev": true,
 			"domains": [ "test.com", "fake.com" ]
 		},
 		{
