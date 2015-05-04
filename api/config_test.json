@@ -5,13 +5,15 @@
 			"token": "asdasdasdasdasdad",
 			"interval": 60,
 			"dev": true,
-			"domains": [ "test.com", "fake.com" ]
+			"domain": "test.com",
+			"hostnames": [ "mail", "chat" ]
 		},
 		{
 			"username": "production-account",
 			"token": "123123123123",
 			"interval": 3600,
-			"domains": [ "live.com", "abc.live.com" ]
+			"domain": "live.com",
+			"hostnames": [ "mail", "support" ]
 		}
 	]
 }

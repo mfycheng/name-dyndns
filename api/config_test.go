@@ -10,17 +10,19 @@ var expectedConfigs []Config
 func init() {
 	expectedConfigs = []Config{
 		Config{
-			Username: "dev-account",
-			Token:    "asdasdasdasdasdad",
-			Interval: 60,
-			Dev:      true,
-			Domains:  []string{"test.com", "fake.com"},
+			Username:  "dev-account",
+			Token:     "asdasdasdasdasdad",
+			Interval:  60,
+			Dev:       true,
+			Domain:    "test.com",
+			Hostnames: []string{"mail", "chat"},
 		},
 		Config{
-			Username: "production-account",
-			Token:    "123123123123",
-			Interval: 3600,
-			Domains:  []string{"live.com", "abc.live.com"},
+			Username:  "production-account",
+			Token:     "123123123123",
+			Interval:  3600,
+			Domain:    "live.com",
+			Hostnames: []string{"mail", "support"},
 		},
 	}
 }

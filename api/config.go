@@ -6,11 +6,12 @@ import (
 )
 
 type Config struct {
-	Dev      bool     `json:"dev"`
-	Domains  []string `json:"domains"`
-	Interval int      `json:"interval"`
-	Token    string   `json:"token"`
-	Username string   `json:"username"`
+	Dev       bool     `json:"dev"`
+	Domain    string   `json:"domain"`
+	Hostnames []string `json:"hostnames"`
+	Interval  int      `json:"interval"`
+	Token     string   `json:"token"`
+	Username  string   `json:"username"`
 }
 
 func LoadConfigs(path string) ([]Config, error) {
