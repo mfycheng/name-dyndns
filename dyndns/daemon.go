@@ -9,23 +9,16 @@ import (
 
 var wg sync.WaitGroup
 
-func updateDomain(a api.API, currentIP, domain string) error {
-	records, err := a.GetRecords(domain)
+func updateDNSRecord(a api.API, domain, recordId string, newRecord api.DNSRecord) error {
+	fmt.Println("Deleting record...")
+	err := a.DeleteDNSRecord(domain, newRecord.RecordId)
 	if err != nil {
 		return err
 	}
 
-	if len(records) == 0 {
-		return nil
-	}
-
-	for _, record := range records {
-		if record.Content != currentIP {
-			// TODO: Update
-		}
-	}
-
-	return nil
+	// Does a /create/ overwrite? or do we have to delete first?
+	fmt.Println("Creating record")
+	return a.CreateDNSRecord(domain, newRecord)
 }
 
 func runConfig(c api.Config, daemon bool) {
@@ -35,7 +28,7 @@ func runConfig(c api.Config, daemon bool) {
 	for {
 		ip, err := GetExternalIP()
 		if err != nil {
-			fmt.Print("Failed to retreive IP: ")
+			fmt.Print("Fail to retreive IP: ")
 			if daemon {
 				fmt.Println("Will retry...")
 				continue
@@ -45,8 +38,31 @@ func runConfig(c api.Config, daemon bool) {
 			}
 		}
 
-		for _, domain := range c.Domains {
-			updateDomain(a, ip, domain)
+		// GetRecords retrieves a list of DNSRecords,
+		// 1 per hostname with the associated domain.
+		// If the content is not the current IP, then
+		// update it.
+		records, err := a.GetRecords(c.Domain)
+		if err != nil {
+			fmt.Print("Failed to retreive records for:%s\n", c.Domain)
+			if daemon {
+				fmt.Println("Will retry...")
+				continue
+			} else {
+				fmt.Println("Giving up.")
+				break
+			}
+		}
+
+		for _, r := range records {
+			if r.Content != ip {
+				fmt.Printf("Updating record %s for %s\n", r.RecordId, c.Domain)
+				r.Content = ip
+				err = updateDNSRecord(a, c.Domain, r.RecordId, r)
+				if err != nil {
+					fmt.Println("Failed to update record.", err)
+				}
+			}
 		}
 
 		if !daemon {

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -74,9 +75,83 @@ func (api API) performRequest(method, url string, body io.Reader) (response []by
 	return ioutil.ReadAll(resp.Body)
 }
 
-// Returns a slice of DNS records associated with a given hostname.
-func (api API) GetRecords(hostname string) (records []DNSRecord, err error) {
-	resp, err := api.performRequest("GET", fmt.Sprintf("%s%s%s", api.baseUrl, "api/dns/list/", hostname), nil)
+func (api API) CreateDNSRecord(domain string, record DNSRecord) error {
+	b, err := json.Marshal(record)
+	if err != nil {
+		return err
+	}
+
+	resp, err := api.performRequest(
+		"POST",
+		fmt.Sprintf("%s%s%s", api.baseUrl, "api/dns/create/", domain),
+		bytes.NewBuffer(b),
+	)
+	if err != nil {
+		return err
+	}
+
+	var result struct {
+		Result resultResponse
+	}
+
+	err = json.Unmarshal(resp, &result)
+	if err != nil {
+		return err
+	}
+	if result.Result.Code != 100 {
+		return errors.New(result.Result.Message)
+	}
+
+	return nil
+}
+
+func (api API) DeleteDNSRecord(domain, recordId string) error {
+	var body struct {
+		RecordId string `json:"record_id"`
+	}
+	body.RecordId = recordId
+
+	b, err := json.Marshal(body)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Body:", string(b))
+
+	resp, err := api.performRequest(
+		"POST",
+		fmt.Sprintf("%s%s%s", api.baseUrl, "api/dns/delete/", domain),
+		bytes.NewBuffer(b),
+	)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Response:", string(resp))
+
+	var result struct {
+		Result resultResponse
+	}
+
+	err = json.Unmarshal(resp, &result)
+	if err != nil {
+		return err
+	}
+	if result.Result.Code != 100 {
+		return errors.New(result.Result.Message)
+	}
+
+	return nil
+}
+
+// Returns a slice of DNS records associated with a given domain.
+func (api API) GetRecords(domain string) (records []DNSRecord, err error) {
+	resp, err := api.performRequest(
+		"GET",
+		fmt.Sprintf("%s%s%s", api.baseUrl, "api/dns/list/", domain),
+		nil,
+	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -90,8 +165,6 @@ func (api API) GetRecords(hostname string) (records []DNSRecord, err error) {
 	if err != nil {
 		return nil, err
 	}
-
-	// Make sure the API call was successful
 	if result.Result.Code != 100 {
 		return nil, errors.New(result.Result.Message)
 	}
