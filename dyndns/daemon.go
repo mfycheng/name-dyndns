@@ -1,8 +1,8 @@
 package dyndns
 
 import (
-	"fmt"
 	"github.com/mfycheng/name-dyndns/api"
+	"github.com/mfycheng/name-dyndns/log"
 	"sync"
 	"time"
 )
@@ -10,14 +10,13 @@ import (
 var wg sync.WaitGroup
 
 func updateDNSRecord(a api.API, domain, recordId string, newRecord api.DNSRecord) error {
-	fmt.Println("Deleting record...")
+	log.Logger.Printf("Deleting DNS record for %s.%s.\n", newRecord.Name, domain)
 	err := a.DeleteDNSRecord(domain, newRecord.RecordId)
 	if err != nil {
 		return err
 	}
 
-	// Does a /create/ overwrite? or do we have to delete first?
-	fmt.Println("Creating record")
+	log.Logger.Printf("Creating DNS record for %s.%s: %s\n", newRecord.Name, domain, newRecord)
 	return a.CreateDNSRecord(domain, newRecord)
 }
 
@@ -26,14 +25,15 @@ func runConfig(c api.Config, daemon bool) {
 
 	a := api.NewAPIFromConfig(c)
 	for {
+		log.Logger.Printf("Running update check for %s.", c.Domain)
 		ip, err := GetExternalIP()
 		if err != nil {
-			fmt.Print("Fail to retreive IP: ")
+			log.Logger.Print("Failed to retreive IP: ")
 			if daemon {
-				fmt.Println("Will retry...")
+				log.Logger.Println("Will retry...")
 				continue
 			} else {
-				fmt.Println("Giving up.")
+				log.Logger.Println("Giving up.")
 				break
 			}
 		}
@@ -44,28 +44,30 @@ func runConfig(c api.Config, daemon bool) {
 		// update it.
 		records, err := a.GetRecords(c.Domain)
 		if err != nil {
-			fmt.Print("Failed to retreive records for:%s\n", c.Domain)
+			log.Logger.Printf("Failed to retreive records for%s\n", c.Domain)
 			if daemon {
-				fmt.Println("Will retry...")
+				log.Logger.Print("Will retry...")
 				continue
 			} else {
-				fmt.Println("Giving up.")
+				log.Logger.Print("Giving up.")
 				break
 			}
 		}
 
 		for _, r := range records {
 			if r.Content != ip {
-				fmt.Printf("Updating record %s for %s\n", r.RecordId, c.Domain)
 				r.Content = ip
 				err = updateDNSRecord(a, c.Domain, r.RecordId, r)
 				if err != nil {
-					fmt.Println("Failed to update record.", err)
+					log.Logger.Printf("Failed to update record %s [%s.%s] with IP: %s\n\t%s\n", r.RecordId, r.Name, c.Domain, ip, err)
+				} else {
+					log.Logger.Printf("Attempting to update record %s [%s.%s] with IP: %s\n", r.RecordId, r.Name, c.Domain, ip)
 				}
 			}
 		}
 
 		if !daemon {
+			log.Logger.Println("Non daemon mode, stopping.")
 			return
 		}
 

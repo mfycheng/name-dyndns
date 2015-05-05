@@ -116,8 +116,6 @@ func (api API) DeleteDNSRecord(domain, recordId string) error {
 		return err
 	}
 
-	fmt.Println("Body:", string(b))
-
 	resp, err := api.performRequest(
 		"POST",
 		fmt.Sprintf("%s%s%s", api.baseUrl, "api/dns/delete/", domain),
@@ -126,8 +124,6 @@ func (api API) DeleteDNSRecord(domain, recordId string) error {
 	if err != nil {
 		return err
 	}
-
-	fmt.Println("Response:", string(resp))
 
 	var result struct {
 		Result resultResponse
