@@ -34,7 +34,6 @@ func runConfig(c api.Config, daemon bool) {
 			if daemon {
 				log.Logger.Printf("Will retry in %d seconds...\n", c.Interval)
 				time.Sleep(time.Duration(c.Interval) * time.Second)
-
 				continue
 			} else {
 				log.Logger.Println("Giving up.")
@@ -52,7 +51,6 @@ func runConfig(c api.Config, daemon bool) {
 			if daemon {
 				log.Logger.Printf("Will retry in %d seconds...\n", c.Interval)
 				time.Sleep(time.Duration(c.Interval) * time.Second)
-
 				continue
 			} else {
 				log.Logger.Print("Giving up.")
