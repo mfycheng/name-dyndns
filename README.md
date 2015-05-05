@@ -1,4 +1,4 @@
-# name-dyndns [![Build Status](https://travis-ci.org/mfycheng/name-dyndns.svg?branch=master)](https://travis-ci.org/mfycheng/ratelimiter)
+# name-dyndns [![Build Status](https://travis-ci.org/mfycheng/name-dyndns.svg?branch=master)](https://travis-ci.org/mfycheng/ratelimiter) [![GoDoc](https://godoc.org/github.com/mfycheng/name-dyndns?status.svg)](https://godoc.org/github.com/mfycheng/name-dyndns)
 
 Client that automatically updates name.com DNS records.
 
