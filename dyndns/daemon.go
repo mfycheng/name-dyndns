@@ -1,3 +1,5 @@
+// Package dyndns provides a tool for running a
+// dynamic dns updating service.
 package dyndns
 
 import (
@@ -42,7 +44,7 @@ func runConfig(c api.Config, daemon bool) {
 		// 1 per hostname with the associated domain.
 		// If the content is not the current IP, then
 		// update it.
-		records, err := a.GetRecords(c.Domain)
+		records, err := a.GetDNSRecords(c.Domain)
 		if err != nil {
 			log.Logger.Printf("Failed to retreive records for%s\n", c.Domain)
 			if daemon {

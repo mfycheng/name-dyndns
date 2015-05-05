@@ -1,3 +1,5 @@
+// Package api provides a basic interface for dealing
+// with Name.com DNS API's.
 package api
 
 import (
@@ -15,12 +17,14 @@ const (
 	devUrl        = "https://api.dev.name.com/"
 )
 
+// Contains details required to access the Name.com API.
 type API struct {
 	baseUrl  string
 	username string
 	token    string
 }
 
+// A Name.com DNS record.
 type DNSRecord struct {
 	RecordId   string `json:"record_id"`
 	Name       string `json:"name"`
@@ -35,10 +39,8 @@ type resultResponse struct {
 	Message string `json:"message"`
 }
 
-// Constructs a new Name.com API
-//
-// If dev = true, then the API uses the development
-// API, instead of the production API.
+// Constructs a new Name.com API. If dev is true, then
+// the API uses the development API, instead of the production API.
 func NewNameAPI(username, token string, dev bool) API {
 	a := API{username: username, token: token}
 
@@ -51,7 +53,7 @@ func NewNameAPI(username, token string, dev bool) API {
 	return a
 }
 
-// Constructs a new Name.com API from a configuration
+// Constructs a new Name.com API from a configuration.
 func NewAPIFromConfig(c Config) API {
 	return NewNameAPI(c.Username, c.Token, c.Dev)
 }
@@ -75,6 +77,9 @@ func (api API) performRequest(method, url string, body io.Reader) (response []by
 	return ioutil.ReadAll(resp.Body)
 }
 
+// Create a DNS record for a given domain. The hostname is
+// specified in the DNSRecord under name, and should not
+// include the domain.
 func (api API) CreateDNSRecord(domain string, record DNSRecord) error {
 	b, err := json.Marshal(record)
 	if err != nil {
@@ -105,6 +110,8 @@ func (api API) CreateDNSRecord(domain string, record DNSRecord) error {
 	return nil
 }
 
+// Deletes a DNS record for a given domain. The recordId can
+// be retreived from GetDNSRecords.
 func (api API) DeleteDNSRecord(domain, recordId string) error {
 	var body struct {
 		RecordId string `json:"record_id"`
@@ -141,7 +148,7 @@ func (api API) DeleteDNSRecord(domain, recordId string) error {
 }
 
 // Returns a slice of DNS records associated with a given domain.
-func (api API) GetRecords(domain string) (records []DNSRecord, err error) {
+func (api API) GetDNSRecords(domain string) (records []DNSRecord, err error) {
 	resp, err := api.performRequest(
 		"GET",
 		fmt.Sprintf("%s%s%s", api.baseUrl, "api/dns/list/", domain),
