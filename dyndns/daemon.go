@@ -32,7 +32,9 @@ func runConfig(c api.Config, daemon bool) {
 		if err != nil {
 			log.Logger.Print("Failed to retreive IP: ")
 			if daemon {
-				log.Logger.Println("Will retry...")
+				log.Logger.Printf("Will retry in %d seconds...\n", c.Interval)
+				time.Sleep(time.Duration(c.Interval) * time.Second)
+
 				continue
 			} else {
 				log.Logger.Println("Giving up.")
@@ -46,9 +48,11 @@ func runConfig(c api.Config, daemon bool) {
 		// update it.
 		records, err := a.GetDNSRecords(c.Domain)
 		if err != nil {
-			log.Logger.Printf("Failed to retreive records for%s\n", c.Domain)
+			log.Logger.Printf("Failed to retreive records for %s:\n\t%s\n", c.Domain, err)
 			if daemon {
-				log.Logger.Print("Will retry...")
+				log.Logger.Printf("Will retry in %d seconds...\n", c.Interval)
+				time.Sleep(time.Duration(c.Interval) * time.Second)
+
 				continue
 			} else {
 				log.Logger.Print("Giving up.")
@@ -68,10 +72,12 @@ func runConfig(c api.Config, daemon bool) {
 			}
 		}
 
+		log.Logger.Println("Update complete.")
 		if !daemon {
 			log.Logger.Println("Non daemon mode, stopping.")
 			return
 		}
+		log.Logger.Printf("Will update again in %d seconds.\n", c.Interval)
 
 		time.Sleep(time.Duration(c.Interval) * time.Second)
 	}
