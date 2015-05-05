@@ -12,13 +12,13 @@ import (
 var wg sync.WaitGroup
 
 func updateDNSRecord(a api.API, domain, recordId string, newRecord api.DNSRecord) error {
-	log.Logger.Printf("Deleting DNS record for %s.%s.\n", newRecord.Name, domain)
+	log.Logger.Printf("Deleting DNS record for %s.\n", newRecord.Name)
 	err := a.DeleteDNSRecord(domain, newRecord.RecordId)
 	if err != nil {
 		return err
 	}
 
-	log.Logger.Printf("Creating DNS record for %s.%s: %s\n", newRecord.Name, domain, newRecord)
+	log.Logger.Printf("Creating DNS record for %s: %s\n", newRecord.Name, newRecord)
 	return a.CreateDNSRecord(domain, newRecord)
 }
 
@@ -63,9 +63,9 @@ func runConfig(c api.Config, daemon bool) {
 				r.Content = ip
 				err = updateDNSRecord(a, c.Domain, r.RecordId, r)
 				if err != nil {
-					log.Logger.Printf("Failed to update record %s [%s.%s] with IP: %s\n\t%s\n", r.RecordId, r.Name, c.Domain, ip, err)
+					log.Logger.Printf("Failed to update record %s [%s] with IP: %s\n\t%s\n", r.RecordId, r.Name, ip, err)
 				} else {
-					log.Logger.Printf("Attempting to update record %s [%s.%s] with IP: %s\n", r.RecordId, r.Name, c.Domain, ip)
+					log.Logger.Printf("Attempting to update record %s [%s] with IP: %s\n", r.RecordId, r.Name, ip)
 				}
 			}
 		}

@@ -77,9 +77,8 @@ func (api API) performRequest(method, url string, body io.Reader) (response []by
 	return ioutil.ReadAll(resp.Body)
 }
 
-// Create a DNS record for a given domain. The hostname is
-// specified in the DNSRecord under name, and should not
-// include the domain.
+// Create a DNS record for a given domain. The name
+// field in DNSRecord is in the format [hostname].[domainname]
 func (api API) CreateDNSRecord(domain string, record DNSRecord) error {
 	b, err := json.Marshal(record)
 	if err != nil {
