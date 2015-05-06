@@ -3,13 +3,28 @@
 package dyndns
 
 import (
+	"fmt"
 	"github.com/mfycheng/name-dyndns/api"
 	"github.com/mfycheng/name-dyndns/log"
+	"strings"
 	"sync"
 	"time"
 )
 
 var wg sync.WaitGroup
+
+func contains(c api.Config, val string) bool {
+	if val == c.Domain {
+		return true
+	}
+
+	for _, v := range c.Hostnames {
+		if fmt.Sprintf("%s.%s", v, c.Domain) == val {
+			return true
+		}
+	}
+	return false
+}
 
 func updateDNSRecord(a api.API, domain, recordId string, newRecord api.DNSRecord) error {
 	log.Logger.Printf("Deleting DNS record for %s.\n", newRecord.Name)
@@ -19,6 +34,16 @@ func updateDNSRecord(a api.API, domain, recordId string, newRecord api.DNSRecord
 	}
 
 	log.Logger.Printf("Creating DNS record for %s: %s\n", newRecord.Name, newRecord)
+
+	// Remove the domain from the DNSRecord name.
+	// This is an unfortunate inconsistency from the API
+	// implementation (returns full name, but only requires host)
+	if newRecord.Name == domain {
+		newRecord.Name = ""
+	} else {
+		newRecord.Name = strings.TrimSuffix(newRecord.Name, fmt.Sprintf(".%s", domain))
+	}
+
 	return a.CreateDNSRecord(domain, newRecord)
 }
 
@@ -27,7 +52,6 @@ func runConfig(c api.Config, daemon bool) {
 
 	a := api.NewAPIFromConfig(c)
 	for {
-		log.Logger.Printf("Running update check for %s.", c.Domain)
 		ip, err := GetExternalIP()
 		if err != nil {
 			log.Logger.Print("Failed to retreive IP: ")
@@ -59,13 +83,18 @@ func runConfig(c api.Config, daemon bool) {
 		}
 
 		for _, r := range records {
+			if !contains(c, r.Name) {
+				continue
+			}
+
+			log.Logger.Printf("Running update check for %s.", r.Name)
 			if r.Content != ip {
 				r.Content = ip
 				err = updateDNSRecord(a, c.Domain, r.RecordId, r)
 				if err != nil {
 					log.Logger.Printf("Failed to update record %s [%s] with IP: %s\n\t%s\n", r.RecordId, r.Name, ip, err)
 				} else {
-					log.Logger.Printf("Attempting to update record %s [%s] with IP: %s\n", r.RecordId, r.Name, ip)
+					log.Logger.Printf("Updated record %s [%s] with IP: %s\n", r.RecordId, r.Name, ip)
 				}
 			}
 		}

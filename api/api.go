@@ -80,7 +80,20 @@ func (api API) performRequest(method, url string, body io.Reader) (response []by
 // Create a DNS record for a given domain. The name
 // field in DNSRecord is in the format [hostname].[domainname]
 func (api API) CreateDNSRecord(domain string, record DNSRecord) error {
-	b, err := json.Marshal(record)
+	// We need to transform name -> hostname for JSON.
+	var body struct {
+		Hostname string `json:"hostname"`
+		Type     string `json:"type"`
+		Content  string `json:"content"`
+		Ttl      string `json:"ttl"`
+	}
+
+	body.Hostname = record.Name
+	body.Type = record.Type
+	body.Content = record.Content
+	body.Ttl = record.Ttl
+
+	b, err := json.Marshal(body)
 	if err != nil {
 		return err
 	}
