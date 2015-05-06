@@ -14,12 +14,12 @@ import (
 var wg sync.WaitGroup
 
 func contains(c api.Config, val string) bool {
-	if val == c.Domain {
-		return true
-	}
-
 	for _, v := range c.Hostnames {
-		if fmt.Sprintf("%s.%s", v, c.Domain) == val {
+		// We have a special case where an empty hostname
+		// is equivalent to the domain (i.e. val == domain).
+		if val == c.Domain && v == "" {
+			return true
+		} else if fmt.Sprintf("%s.%s", v, c.Domain) == val {
 			return true
 		}
 	}
