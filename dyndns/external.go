@@ -28,7 +28,7 @@ func tryMirror(url string) (string, error) {
 	return string(contents), nil
 }
 
-// Retrieves the external facing IP Address.
+// GetExternalIP retrieves the external facing IP Address.
 // If multiple mirrors are provided in Urls,
 // it will try each one (in order), should
 // preceding mirrors fail.

@@ -26,9 +26,9 @@ func contains(c api.Config, val string) bool {
 	return false
 }
 
-func updateDNSRecord(a api.API, domain, recordId string, newRecord api.DNSRecord) error {
+func updateDNSRecord(a api.API, domain, recordID string, newRecord api.DNSRecord) error {
 	log.Logger.Printf("Deleting DNS record for %s.\n", newRecord.Name)
-	err := a.DeleteDNSRecord(domain, newRecord.RecordId)
+	err := a.DeleteDNSRecord(domain, newRecord.RecordID)
 	if err != nil {
 		return err
 	}
@@ -90,11 +90,11 @@ func runConfig(c api.Config, daemon bool) {
 			log.Logger.Printf("Running update check for %s.", r.Name)
 			if r.Content != ip {
 				r.Content = ip
-				err = updateDNSRecord(a, c.Domain, r.RecordId, r)
+				err = updateDNSRecord(a, c.Domain, r.RecordID, r)
 				if err != nil {
-					log.Logger.Printf("Failed to update record %s [%s] with IP: %s\n\t%s\n", r.RecordId, r.Name, ip, err)
+					log.Logger.Printf("Failed to update record %s [%s] with IP: %s\n\t%s\n", r.RecordID, r.Name, ip, err)
 				} else {
-					log.Logger.Printf("Updated record %s [%s] with IP: %s\n", r.RecordId, r.Name, ip)
+					log.Logger.Printf("Updated record %s [%s] with IP: %s\n", r.RecordID, r.Name, ip)
 				}
 			}
 		}
@@ -110,10 +110,13 @@ func runConfig(c api.Config, daemon bool) {
 	}
 }
 
-// For each domain, check if the host record matches
-// the current external IP. If it does not, it updates.
-// If daemon is true, then Run will run forever, polling at
-// an interval specified in each config.
+// Run will process each configuration in configs.
+// If daemon is true, then Run will run forever,
+// processing each configuration at its specified
+// interval.
+//
+// Each configuration represents a domain with
+// multiple hostnames.
 func Run(configs []api.Config, daemon bool) {
 	for _, config := range configs {
 		wg.Add(1)
