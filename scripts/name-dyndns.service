@@ -1,5 +1,5 @@
 [Unit]
-Description=Automatically update name.com records to the hosts external ip.
+Description=name-dyndns
 
 [Service]
 ExecStart=/usr/local/bin/name-dyndns -daemon=true -config=/etc/name-dyndns/config.json
