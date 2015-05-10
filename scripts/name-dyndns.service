@@ -1,0 +1,9 @@
+[Unit]
+Description=Automatically update name.com records to the hosts external ip.
+
+[Service]
+ExecStart=/usr/local/bin/name-dyndns -daemon=true -config=/etc/name-dyndns/config.json
+
+[Install]
+WantedBy=multi-user.target
+
