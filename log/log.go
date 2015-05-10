@@ -9,7 +9,7 @@ import (
 // Global logger.
 var Logger *log.Logger
 
-// Initialize the logger with a specific io.Writer.
+// Init intializes the logger with a specific io.Writer.
 // This function is generally called near startup.
 func Init(writer io.Writer) {
 	Logger = log.New(writer, "", log.Ldate|log.Ltime)
