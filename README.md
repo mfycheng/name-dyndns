@@ -37,7 +37,7 @@ A detailed usage can be found by running:
 
 ## Error Handling
 
-Currently, there is limited testing, primarily on none-api dependant utilities.
+Currently, there is limited testing, primarily on name-api dependant utilities.
 While error handling _should_ be done gracefully, not every edge case has been tested.
 
 Ideally, when running in daemon mode, name-dyndns tries to treat any errors
