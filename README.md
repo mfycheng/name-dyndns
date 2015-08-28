@@ -1,5 +1,5 @@
-# name-dyndns [![Build Status](https://travis-ci.org/mfycheng/name-dyndns.svg?branch=master)](https://travis-ci.org/mfycheng/name-dyndns) [![GoDoc](https://godoc.org/github.com/mfycheng/name-dyndns?status.svg)](https://godoc.org/github.com/mfycheng/name-dyndns)
-
+# name-dyndns [![Build Status](https://travis-ci.org/mfycheng/name-dyndns.svg?branch=master)](https://travis-ci.org/mfycheng/name-dyndns) [![GoDoc](https://godoc.org/github.com/mfycheng/name-dyndns?status.svg)](https://godoc.org/github.com/mfycheng/name-dyndns) [![Codeship](https://codeship.com/projects/ab0282a0-2f88-0133-036b-02dbfc2dcf25)]
+/status?branch=master
 Client that automatically updates name.com DNS records.
 
 ## Getting name-dyndns
