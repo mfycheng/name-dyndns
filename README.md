@@ -6,7 +6,7 @@ Client that automatically updates name.com DNS records.
 Since name-dyndns has no external dependencies, you can get it simply by:
 
 ```go
-go get github.com/mfycheng/name-dyndns.git
+go get github.com/mfycheng/name-dyndns
 ```
 
 ## Requirements

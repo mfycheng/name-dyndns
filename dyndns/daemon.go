@@ -4,11 +4,12 @@ package dyndns
 
 import (
 	"fmt"
-	"github.com/mfycheng/name-dyndns/api"
-	"github.com/mfycheng/name-dyndns/log"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/mfycheng/name-dyndns/api"
+	"github.com/mfycheng/name-dyndns/log"
 )
 
 var wg sync.WaitGroup
@@ -84,6 +85,12 @@ func runConfig(c api.Config, daemon bool) {
 
 		for _, r := range records {
 			if !contains(c, r.Name) {
+				continue
+			}
+
+			// Only A records should be mapped to an IP.
+			// TODO: Support AAAA records.
+			if r.Type != "A" {
 				continue
 			}
 
